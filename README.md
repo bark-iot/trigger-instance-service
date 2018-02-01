@@ -1,2 +1,3 @@
 # trigger-instance-service
-Trigger Instance Service
+
+See `bark` repository for instructions.
