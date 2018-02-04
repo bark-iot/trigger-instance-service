@@ -22,9 +22,21 @@
   ]
   revision = "88edab0803230a3898347e77b474f8c1820a1f20"
 
+[[projects]]
+  name = "github.com/mattes/migrate"
+  packages = [
+    ".",
+    "database",
+    "database/postgres",
+    "source",
+    "source/file"
+  ]
+  revision = "035c07716cd373d88456ec4d701402df52584cb4"
+  version = "v3.0.1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "88bf136ceea19a43896df79713b61f30553774f4694bd3286c87538b88281570"
+  inputs-digest = "a68436db08ec5ac4572ada51c428ca0162a9fe29006c59818ced29ee947e22cd"
   solver-name = "gps-cdcl"
   solver-version = 1
