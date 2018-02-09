@@ -1,6 +1,9 @@
 package main
 
-import "os"
+import (
+    "os"
+    "log"
+)
 
 func main() {
     a := App{}
@@ -9,5 +12,6 @@ func main() {
         os.Getenv("POSTGRES_PASSWORD"),
         os.Getenv("POSTGRES_DB"))
 
+    log.Println("Running on port 80")
     a.Run(":80")
 }

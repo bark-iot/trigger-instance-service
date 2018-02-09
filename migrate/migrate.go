@@ -26,7 +26,7 @@ func main() {
 		os.Exit(1)
 	}
 	m, err := migrate.NewWithDatabaseInstance(
-		"file:///go/src/app/migrations",
+		"file:///go/src/app/migrate/migrations",
 		"postgres", driver)
 	if err != nil {
 		fmt.Printf("Cannot init migrate %v", err)
