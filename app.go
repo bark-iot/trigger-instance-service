@@ -16,7 +16,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"io/ioutil"
-	"bytes"
 )
 
 type App struct {
@@ -73,30 +72,47 @@ func (a *App) authorize(r *http.Request, bodyBytes []byte) error {
 func (a *App) createTriggerInstance(w http.ResponseWriter, r *http.Request) {
 	bodyBytes, _ := ioutil.ReadAll(r.Body)
 
+	// Authorize
 	if err := a.authorize(r, bodyBytes); err != nil {
 		log.Printf("Not authorized with error: %v", err)
 		respondWithError(w, http.StatusForbidden, "Invalid Authorization header")
 		return
 	}
+	defer r.Body.Close()
 
-	var t models.TriggerInstance
-	decoder := json.NewDecoder(bytes.NewReader(bodyBytes))
-	if err := decoder.Decode(&t); err != nil {
+	var ti models.TriggerInstance
+	var dat map[string]interface{}
+	if err := json.Unmarshal(bodyBytes, &dat); err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 		return
 	}
-	defer r.Body.Close()
+	ti.InputData = dat["input_data"].(string)
 
-	if err := t.CreateTriggerInstance(a.DB); err != nil {
+	// Get trigger ID
+	d := models.Device{Token: dat["device_token"].(string)}
+	if err := d.GetDevice(a.DB); err != nil {
+		log.Println(err)
+		respondWithError(w, http.StatusBadRequest, "Invalid device token")
+		return
+	}
+	t := models.Trigger{DeviceID: d.ID, Key: dat["key"].(string)}
+	if err := t.GetTrigger(a.DB); err != nil {
+		log.Println(err)
+		respondWithError(w, http.StatusBadRequest, "Invalid trigger key")
+		return
+	}
+	ti.TriggerID = t.ID
+
+	if err := ti.CreateTriggerInstance(a.DB); err != nil {
 		log.Println(err)
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	response, _ := json.Marshal(t)
+	response, _ := json.Marshal(ti)
 	log.Printf("Created Trigger Instance %s", response)
-	respondWithJSON(w, http.StatusCreated, t)
+	respondWithJSON(w, http.StatusCreated, ti)
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
