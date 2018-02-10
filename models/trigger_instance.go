@@ -1,4 +1,4 @@
-package main
+package models
 
 import (
 	"database/sql"
@@ -10,12 +10,12 @@ type TriggerInstance struct {
 	InputData  string `json:"input_data"`
 }
 
-func (t *TriggerInstance) getTriggerInstance(db *sql.DB) error {
+func (t *TriggerInstance) GetTriggerInstance(db *sql.DB) error {
 	return db.QueryRow("SELECT trigger_id, input_data FROM trigger_instances WHERE id=$1",
 		t.ID).Scan(&t.TriggerID, &t.InputData)
 }
 
-func (t *TriggerInstance) createTriggerInstance(db *sql.DB) error {
+func (t *TriggerInstance) CreateTriggerInstance(db *sql.DB) error {
 	err := db.QueryRow(
 		"INSERT INTO trigger_instances(trigger_id, input_data) VALUES($1, $2) RETURNING id",
 		t.TriggerID, t.InputData).Scan(&t.ID)
