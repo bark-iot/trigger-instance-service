@@ -16,6 +16,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"io/ioutil"
+	"time"
 )
 
 type App struct {
@@ -103,10 +104,11 @@ func (a *App) createTriggerInstance(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ti.TriggerID = t.ID
+	ti.CreatedAt = time.Now()
 
 	if err := ti.CreateTriggerInstance(a.DB); err != nil {
 		log.Println(err)
-		respondWithError(w, http.StatusInternalServerError, err.Error())
+		respondWithError(w, http.StatusInternalServerError, "Internal server error")
 		return
 	}
 
