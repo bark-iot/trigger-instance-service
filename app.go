@@ -43,6 +43,7 @@ func (a *App) Run(addr string) {
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/trigger-instances", a.createTriggerInstance).Methods("POST")
+	a.Router.PathPrefix("/trigger-instances/docs/").Handler(http.StripPrefix("/trigger-instances/docs/", http.FileServer(http.Dir("./static_docs/"))))
 }
 
 func (a *App) authorize(r *http.Request, bodyBytes []byte) error {

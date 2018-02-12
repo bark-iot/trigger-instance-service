@@ -1,0 +1,4 @@
+site_name: Trigger Instance Service
+theme: readthedocs
+site_dir: ../static_docs
+repo_url: https://github.com/bark-iot/trigger-instance-service/
